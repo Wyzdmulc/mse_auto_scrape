@@ -15,6 +15,7 @@ from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 import logging
 import os
+from io import StringIO
 
 # =============================
 # CONFIGURATION
@@ -73,7 +74,7 @@ def fetch_table():
     if not table:
         raise ValueError("No table found on the page. The site may have changed.")
 
-    df = pd.read_html(str(table))[0]
+    df = pd.read_html(StringIO(str(table)))[0]
     df.columns = [c.strip() for c in df.columns]
     df["scrape_date"] = datetime.now().strftime("%Y-%m-%d")
     logger.info(f"Fetched {len(df)} rows from MSE.")
