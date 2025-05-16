@@ -2,36 +2,39 @@ name: Daily MSE Scraper
 
 on:
   schedule:
-    - cron: "0 14 * * 1-5"   # Runs Mon–Fri at 14:00 UTC = 16:00 Malawi time
-  workflow_dispatch:          # Allows manual trigger from GitHub
+    - cron: "0 6 * * *"   # runs every day at 06:00 UTC
+  workflow_dispatch:       # allows you to trigger manually
 
 jobs:
   scrape:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repo
+      - name: Checkout repository
         uses: actions/checkout@v4
 
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.11'
+          python-version: "3.11"
 
       - name: Install dependencies
-        run: pip install -r requirements.txt
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
 
-      - name: Run scraper
+      - name: Run scraper and send email
         env:
           EMAIL_USER: ${{ secrets.EMAIL_USER }}
           EMAIL_PASS: ${{ secrets.EMAIL_PASS }}
-          EMAIL_TO: ${{ secrets.EMAIL_TO }}
-        run: python mse_auto_scraper_alerts.py
-
-      - name: Commit updated Excel file
         run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add mse_daily.xlsx mse_data.db mse_scraper.log || true
-          git commit -m "Daily data update $(date '+%Y-%m-%d')" || echo "No changes to commit"
-          git push || echo "No push performed"
+          echo "Starting MSE scraper..."
+          python mse_auto_scraper_alerts.py
+          echo "Scraper completed at $(date)" >> run_log.txt
+
+      - name: Upload log file
+        if: always()   # ensures log uploads even if scraper fails
+        uses: actions/upload-artifact@v4
+        with:
+          name: scraper-run-log
+          path: run_log.txt
