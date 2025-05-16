@@ -16,6 +16,7 @@ from selenium.webdriver.chrome.options import Options
 import logging
 import os
 from io import StringIO
+from dotenv import load_dotenv
 
 # =============================
 # CONFIGURATION
@@ -26,6 +27,8 @@ DB_FILE = "mse_data.db"
 EXCEL_FILE = "mse_daily.xlsx"
 TABLE_NAME = "daily_prices"
 LOG_FILE = "mse_scraper.log"
+
+load_dotenv()  # Load environment variables from .env file
 
 # Load email config from environment variables (set via .env or GitHub Secrets)
 EMAIL_USER = os.getenv("EMAIL_USER", "your_email@gmail.com")

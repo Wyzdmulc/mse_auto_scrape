@@ -4,3 +4,4 @@ mse_data.db
 mse_daily.xlsx
 *.log
 __pycache__/
+.env
