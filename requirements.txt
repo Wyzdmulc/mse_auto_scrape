@@ -5,3 +5,5 @@ beautifulsoup4
 openpyxl
 schedule
 python-dotenv
+requests
+lxml

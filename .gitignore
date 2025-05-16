@@ -1,7 +1,7 @@
 # Ignore secrets and local data
-config.env
+.env
 mse_data.db
 mse_daily.xlsx
 *.log
 __pycache__/
-.env
+*.pyc
