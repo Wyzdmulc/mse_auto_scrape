@@ -7,3 +7,5 @@ schedule
 python-dotenv
 requests
 lxml
+matplotlib
+seaborn
