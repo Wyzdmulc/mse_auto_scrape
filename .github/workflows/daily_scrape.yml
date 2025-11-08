@@ -1,0 +1,37 @@
+name: Daily MSE Scraper
+
+on:
+  schedule:
+    - cron: "0 14 * * 1-5"   # Runs Mon–Fri at 14:00 UTC = 16:00 Malawi time
+  workflow_dispatch:          # Allows manual trigger from GitHub
+
+jobs:
+  scrape:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run scraper
+        env:
+          EMAIL_USER: ${{ secrets.EMAIL_USER }}
+          EMAIL_PASS: ${{ secrets.EMAIL_PASS }}
+          EMAIL_TO: ${{ secrets.EMAIL_TO }}
+        run: python mse_auto_scraper_alerts.py
+
+      - name: Commit updated Excel file
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add mse_daily.xlsx mse_data.db mse_scraper.log || true
+          git commit -m "Daily data update $(date '+%Y-%m-%d')" || echo "No changes to commit"
+          git push || echo "No push performed"
