@@ -5,3 +5,5 @@ mse_daily.xlsx
 *.log
 __pycache__/
 *.pyc
+.ipynb_checkpoints
+mse_analysis_output.xlsx
